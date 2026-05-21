@@ -1,6 +1,7 @@
 import cookieParser from "cookie-parser";
 import express, { type Request, type Response } from "express";
 import { authRoute } from "./modules/auth/auth.route";
+import globalErrorHandler from "./middleware/gobalErrorhandler";
 const app = express()
 
 // Middlewares
@@ -18,4 +19,13 @@ app.get('/', (req : Request, res: Response) => {
 
 // Api Routes
 app.use("/api/auth/", authRoute)
+
+app.use((req: Request, res: Response) => {
+  res.status(404).json({
+    success: false,
+    message: `Route not found: ${req.method} ${req.originalUrl}`,
+  });
+});
+
+app.use(globalErrorHandler);
 export default  app ;
