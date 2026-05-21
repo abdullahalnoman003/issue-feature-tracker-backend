@@ -1,7 +1,8 @@
 import bcrypt from "bcryptjs";
 import { pool } from "../../database/index";
 import config from "../../config";
-import { AppError } from "../../middleware/gobalErrorhandler";
+import { AppError } from "../../middleware/globalErrorhandler";
+import jwt from "jsonwebtoken";
 
 const signUpIntoDB = async (payload: any) => {
   const { name, email, password, role } = payload;
@@ -34,13 +35,28 @@ const loginIntoDB = async (payload: { email: string; password: string }) => {
     [email],
   );
   if (userData.rows.length === 0) {
-    throw new AppError("Invalid credentials. Please check your email or password.", 401);
+    throw new AppError(
+      "Invalid credentials. Please check your email or password.",
+      401,
+    );
   }
   const user = userData.rows[0];
   const passwordCheck = await bcrypt.compare(password, user.password);
   if (!passwordCheck) {
-    throw new AppError("Invalid credentials. Please check your email or password.", 401);
+    throw new AppError(
+      "Invalid credentials. Please check your email or password.",
+      401,
+    );
   }
+  const Pay = {
+    id: user.id,
+    name: user.name,
+    role: user.role,
+  };
+  const accessToken = jwt.sign(Pay, config.secret as string, {
+    expiresIn: "10d",
+  });
+  return {accessToken,user};
 };
 
 export const authService = {

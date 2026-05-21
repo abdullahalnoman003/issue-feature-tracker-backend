@@ -12,7 +12,18 @@ const signUpUser = async (req:Request, res: Response) =>{
     });
 }
 
+const loginUser = async (req: Request, res: Response) =>{
+    const result = await authService.loginIntoDB(req.body);
+    delete result.user.password;
+    responseSender(res,{
+        statusCode : 200,
+        success: true,
+        message : "Login Successful",
+        data : result,
+    });
+}
+
 export const authController = {
     signUpUser,
-
+    loginUser
 }
