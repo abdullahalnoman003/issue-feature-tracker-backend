@@ -24,8 +24,17 @@ const createReport = async (req: Request, res: Response) => {
   });
 };
 const getAllReport = async (req: Request, res: Response) => {
-  res.status(200).json({
-    message: "API OK",
+  const sort = typeof req.query.sort === "string" ? req.query.sort : undefined;
+  const type = typeof req.query.type === "string" ? req.query.type : undefined;
+  const status = typeof req.query.status === "string" ? req.query.status : undefined;
+
+  const result = await issueServices.getAllIssueFromDB(sort, type, status);
+
+  responseSender(res, {
+    statusCode: 200,
+    success: true,
+    message: "Issues retrieved successfully",
+    data: result,
   });
 };
 const getSingleReport = async (req: Request, res: Response) => {
@@ -54,7 +63,7 @@ const updateSingleReport = async (req: Request, res: Response) => {
 const deleteSingleReport = async (req: Request, res: Response) => {
   const { id } = req.params;
  const result = await issueServices.deleteIssueFromDB(id as string);
- console.log(result);
+ console.log(result.rows[0]);
   res.status(200).json({
     success: true,
     message: "Issue deleted successfully",

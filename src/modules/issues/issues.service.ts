@@ -12,7 +12,56 @@ const createIssueIntoDB = async (payload: any) => {
   );
   return result;
 };
-const getAllIssueFromDB = async () => {};
+const getAllIssueFromDB = async (
+  sort?: string,
+  type?: string,
+  status?: string,
+) => {
+  const order = sort === "oldest" ? "ASC" : "DESC";
+  let base = `SELECT * FROM issues WHERE 1=1`;
+  const params: any[] = [];
+
+  if (type) {
+    params.push(type);
+    base += ` AND type = $${params.length}`;
+  }
+
+  if (status) {
+    params.push(status);
+    base += ` AND status = $${params.length}`;
+  }
+
+  base += ` ORDER BY created_at ${order}`;
+
+  const issuesResult = await pool.query(base, params);
+
+  const issues = issuesResult.rows;
+  if (issues.length === 0) {
+    return [];
+  }
+
+  const reporterIds = [...new Set(issues.map((issue: any) => issue.reporter_id))];
+  const userResult = await pool.query(
+    `SELECT id, name, role FROM users WHERE id = ANY($1::int[])`,
+    [reporterIds],
+  );
+
+  const usersById: Record<number, { id: number; name: string; role: string }> = {};
+  for (const user of userResult.rows) {
+    usersById[user.id] = user;
+  }
+
+  return issues.map((issue: any) => ({
+    id: issue.id,
+    title: issue.title,
+    description: issue.description,
+    type: issue.type,
+    status: issue.status,
+    reporter: usersById[issue.reporter_id],
+    created_at: issue.created_at,
+    updated_at: issue.updated_at,
+  }));
+};
 const getSingleIssueFromDB = async (id: string) => {
   const issueResult = await pool.query(
     `
