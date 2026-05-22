@@ -2,6 +2,7 @@ import cookieParser from "cookie-parser";
 import express, { type Request, type Response } from "express";
 import { authRoute } from "./modules/auth/auth.route";
 import globalErrorHandler from "./middleware/globalErrorhandler";
+import { issuesRoute } from "./modules/issues/issues.route";
 const app = express()
 
 // Middlewares
@@ -18,7 +19,8 @@ app.get('/', (req : Request, res: Response) => {
 
 
 // Api Routes
-app.use("/api/auth/", authRoute)
+app.use("/api/auth/", authRoute);
+app.use("/api/issues", issuesRoute);
 
 app.use((req: Request, res: Response) => {
   res.status(404).json({
