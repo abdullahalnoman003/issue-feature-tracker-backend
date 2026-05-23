@@ -278,7 +278,7 @@ The API can be deployed using:
 
 PostgreSQL providers:
 
-* NeonDB
+* NeonDB (Used in this project)
 * Supabase
 * ElephantSQL
 
@@ -305,7 +305,3 @@ Developed by Abdullah Al Noman
 GitHub: [https://github.com/abdullahalnoman003](https://github.com/abdullahalnoman003)
 
 ---
-
-# 📄 License
-
-This project is licensed under the MIT License.

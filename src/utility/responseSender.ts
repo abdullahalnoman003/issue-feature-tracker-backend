@@ -4,7 +4,7 @@ type TResponse<T> = {
   success: boolean;
   message: string;
   data?: T;
-  error?: any;
+  error?: unknown;
 };
 const responseSender = <T>( res: Response, data : TResponse<T>) =>{
     res.status(data.statusCode).json({

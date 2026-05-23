@@ -4,6 +4,18 @@ import { AppError } from "../../middleware/globalErrorhandler";
 import type { UserIssueCreate } from "../../types";
 import type { IIssue, IIUsers } from "./issues.interface";
 
+type IssueRow = {
+  id: number;
+  title: string;
+  description: string;
+  type: string;
+  status: string;
+  reporter_id: number;
+  created_at: string | Date;
+  updated_at: string | Date;
+};
+type UserRow = { id: number; name: string; role: string };
+
 const createIssueIntoDB = async (payload: UserIssueCreate) => {
   const { title, description, type, reporter_id } = payload;
   const result = await pool.query(
@@ -21,7 +33,7 @@ const getAllIssueFromDB = async (
 ) => {
   const order = sort === "oldest" ? "ASC" : "DESC";
   let base = `SELECT * FROM issues WHERE 1=1`;
-  const params: any[] = [];
+  const params: string[] = [];
 
   if (type) {
     params.push(type);
@@ -37,23 +49,23 @@ const getAllIssueFromDB = async (
 
   const issuesResult = await pool.query(base, params);
 
-  const issues = issuesResult.rows;
+  const issues = issuesResult.rows as IssueRow[];
   if (issues.length === 0) {
     return [];
   }
 
-  const reporterIds = [...new Set(issues.map((issue: any) => issue.reporter_id))];
+  const reporterIds = [...new Set(issues.map((issue) => issue.reporter_id))];
   const userResult = await pool.query(
     `SELECT id, name, role FROM users WHERE id = ANY($1::int[])`,
     [reporterIds],
   );
 
-  const usersById: Record<number, { id: number; name: string; role: string }> = {};
-  for (const user of userResult.rows) {
+  const usersById: Record<number, UserRow> = {};
+  for (const user of userResult.rows as UserRow[]) {
     usersById[user.id] = user;
   }
 
-  return issues.map((issue: any) => ({
+  return issues.map((issue) => ({
     id: issue.id,
     title: issue.title,
     description: issue.description,
@@ -127,11 +139,12 @@ const updateIssueFromDB = async (
       title = COALESCE($1, title),
       description = COALESCE($2, description),
       type = COALESCE($3, type),
+      status = COALESCE($4, status),
       updated_at = NOW()
-    WHERE id = $4
+    WHERE id = $5
     RETURNING *
     `,
-    [payload.title, payload.description, payload.type, id],
+    [ payload.title ?? null, payload.description ?? null, payload.type ?? null,payload.status ?? null,id,],
   );
 
   return updatedResult.rows[0];
