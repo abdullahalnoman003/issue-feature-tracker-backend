@@ -41,21 +41,30 @@ Built with scalability, security, and clean architecture in mind, DevIntel follo
 
 ```bash
 src/
-│
-├── app/
-│   ├── modules/
-│   │   ├── auth/
-│   │   └── issues/
-│   │
-│   ├── middleware/
-│   ├── utils/
-│   ├── config/
-│   ├── interfaces/
-│   ├── errors/
-│   └── routes/
-│
 ├── app.ts
-└── server.ts
+├── server.ts
+├── config/
+│   └── index.ts
+├── database/
+│   └── index.ts
+├── middleware/
+│   ├── auth.ts
+│   ├── globalErrorhandler.ts
+│   └── user.d.ts
+├── modules/
+│   ├── auth/
+│   │   ├── auth.controller.ts
+│   │   ├── auth.route.ts
+│   │   └── auth.service.ts
+│   └── issues/
+│       ├── issues.controller.ts
+│       ├── issues.interface.ts
+│       ├── issues.route.ts
+│       └── issues.service.ts
+├── types/
+│   └── index.ts
+└── utility/
+  └── responseSender.ts
 ```
 
 ---
@@ -196,10 +205,11 @@ Create a `.env` file in the root directory.
 
 ```env
 PORT=5000
-DATABASE_URL=your_database_url
-JWT_SECRET=your_secret_key
-BCRYPT_SALT_ROUNDS=10
-NODE_ENV=development
+CONNECTION=your_database_connection_string
+ACCESS_TOKEN_SECRET=your_access_token_secret
+REFRESH_TOKEN_SECRET=your_refresh_token_secret
+BYCR_ROUND=10
+
 ```
 
 ## Run Development Server
@@ -271,6 +281,8 @@ PostgreSQL providers:
 * NeonDB
 * Supabase
 * ElephantSQL
+
+**Live Deployment:** https://devintel-backend.vercel.app/ 
 
 ---
 
