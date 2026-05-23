@@ -1,4 +1,5 @@
-import { pool } from "../../database";
+
+import { pool } from "../../database/index";
 import { AppError } from "../../middleware/globalErrorhandler";
 import type { UserIssueCreate } from "../../types";
 import type { IIssue, IIUsers } from "./issues.interface";

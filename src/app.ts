@@ -1,4 +1,4 @@
-import cookieParser from "cookie-parser";
+
 import express, { type Request, type Response } from "express";
 import { authRoute } from "./modules/auth/auth.route";
 import globalErrorHandler from "./middleware/globalErrorhandler";
@@ -7,8 +7,6 @@ const app = express()
 
 // Middlewares
 app.use(express.json());
-// app.use(cookieParser());
-
 
 //Default route or root route
 app.get('/', (req : Request, res: Response) => {
