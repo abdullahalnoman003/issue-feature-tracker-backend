@@ -3,8 +3,9 @@ import { pool } from "../../database/index";
 import config from "../../config";
 import { AppError } from "../../middleware/globalErrorhandler";
 import jwt from "jsonwebtoken";
+import type { UserCreate } from "../../types";
 
-const signUpIntoDB = async (payload: any) => {
+const signUpIntoDB = async (payload: UserCreate) => {
   const { name, email, password, role } = payload;
   const hashedPassword = await bcrypt.hash(password, config.bycrypt_round);
   const user = await pool.query(

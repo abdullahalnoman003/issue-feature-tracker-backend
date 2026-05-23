@@ -1,8 +1,9 @@
 import { pool } from "../../database";
 import { AppError } from "../../middleware/globalErrorhandler";
+import type { UserIssueCreate } from "../../types";
 import type { IIssue, IIUsers } from "./issues.interface";
 
-const createIssueIntoDB = async (payload: any) => {
+const createIssueIntoDB = async (payload: UserIssueCreate) => {
   const { title, description, type, reporter_id } = payload;
   const result = await pool.query(
     `
